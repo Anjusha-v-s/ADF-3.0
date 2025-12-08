@@ -1,0 +1,9 @@
+{
+	"name": "ADFpipelineete",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ecf80d86-f9a4-43e5-927c-2cd25380b284",
+		"tenantId": "adb53b4f-b05f-4dcb-a2e1-9111380568c3"
+	}
+}
