@@ -117,7 +117,8 @@
 							"type": {
 								"value": "\nSELECT count(*) AS total_count FROM @{pipeline().parameters.schema}.@{pipeline().parameters.table} WHERE last_updated > '@{activity('last_cdc').output.value[0].cdc_timestamp}'",
 								"type": "Expression"
-							}
+							},
+							"text": "\nSELECT count(*) AS total_count FROM @{pipeline().parameters.schema}.@{pipeline().parameters.table} WHERE last_updated > '@{activity('last_cdc').output.value[0].cdc_timestamp}'"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
