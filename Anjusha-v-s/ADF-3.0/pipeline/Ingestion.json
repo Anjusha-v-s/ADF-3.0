@@ -101,11 +101,6 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"additionalColumns": [
-										{
-											"value": "$$COLUMN:"
-										}
-									],
 									"sqlReaderQuery": {
 										"value": "SELECT * FROM @{pipeline().parameters.schema}.@{pipeline().parameters.table} WHERE last_updated > '@{activity('last_cdc').output.value[0].cdc_timestamp}'",
 										"type": "Expression"
@@ -116,7 +111,8 @@
 								"sink": {
 									"type": "ParquetSink",
 									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "FlattenHierarchy"
 									},
 									"formatSettings": {
 										"type": "ParquetWriteSettings"
