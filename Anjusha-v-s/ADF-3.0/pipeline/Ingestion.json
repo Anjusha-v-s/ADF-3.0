@@ -114,8 +114,7 @@
 				"typeProperties": {
 					"scripts": [
 						{
-							"type": "Query",
-							"text": {
+							"type": {
 								"value": "\nSELECT count(*) AS total_count FROM @{pipeline().parameters.schema}.@{pipeline().parameters.table} WHERE last_updated > '@{activity('last_cdc').output.value[0].cdc_timestamp}'",
 								"type": "Expression"
 							}
