@@ -132,7 +132,7 @@
 			},
 			"table": {
 				"type": "string",
-				"defaultValue": "Orders"
+				"defaultValue": "orders"
 			}
 		},
 		"annotations": []
