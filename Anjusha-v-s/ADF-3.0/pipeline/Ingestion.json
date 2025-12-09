@@ -60,7 +60,7 @@
 						{
 							"type": "Query",
 							"text": {
-								"value": "@concat(\n'SELECT count(*) AS total_count FROM ',\npipeline().parameters.schema,\n'.',\npipeline().parameters.table,\n' WHERE last_updated > ''',\nactivity('last_cdc').output.firstRow.cdc_timestamp,\n''''\n)\n",
+								"value": "@concat(\n'SELECT count(*) AS total_count FROM ',\npipeline().parameters.schema,\n'.',\npipeline().parameters.table,\n\n)\n",
 								"type": "Expression"
 							}
 						}
