@@ -27,7 +27,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "Json1",
+						"referenceName": "cdc_json",
 						"type": "DatasetReference"
 					}
 				}
@@ -60,7 +60,7 @@
 						{
 							"type": "Query",
 							"text": {
-								"value": "@activity('last_cdc').output.firstRowactivity('last_cdc').output",
+								"value": "SELECT count(*) AS total_count FROM @{pipeline().parameters.schema}.@{pipeline().parameters.table} WHERE last_updated > '@{activity('last_cdc').output.value[0].cdc_timestamp}'",
 								"type": "Expression"
 							}
 						}
@@ -200,7 +200,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "Json1",
+									"referenceName": "cdc_json",
 									"type": "DatasetReference"
 								}
 							]
