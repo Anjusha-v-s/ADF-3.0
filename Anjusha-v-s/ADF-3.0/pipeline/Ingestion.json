@@ -60,7 +60,7 @@
 						{
 							"type": "Query",
 							"text": {
-								"value": "@concat(\n'SET NOCOUNT ON; ',\n'SELECT * FROM ',\npipeline().parameters.schema,\n'.',\npipeline().parameters.table,\n' WHERE last_updated > ''',\nactivity('last_cdc').output.firstRow.cdc_timestamp,\n''';'\n)\n",
+								"value": "@concat(\r\n    'SET NOCOUNT ON; SELECT * FROM ',\r\n    pipeline().parameters.schema,\r\n    '.',\r\n    pipeline().parameters.table,\r\n    ' WHERE last_updated > ''',\r\n    activity('last_cdc').output.firstRow.cdc_timestamp,\r\n    ''';'\r\n)\r\n",
 								"type": "Expression"
 							}
 						}
