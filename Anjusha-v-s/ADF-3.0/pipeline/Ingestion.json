@@ -60,7 +60,7 @@
 						{
 							"type": "Query",
 							"text": {
-								"value": "@concat(\n    'SELECT count(*) FROM ',\n    pipeline().parameters.schema,\n    '.',\n    pipeline().parameters.table,\n    ' WHERE last_updated > ''',\n    activity('last_cdc').output.firstRow.cdc_timestamp,\n    ''''\n)\n",
+								"value": "SELECT MAX(last_updated) FROM @{pipeline().parameters.schema}.@{pipeline().parameters.table}",
 								"type": "Expression"
 							}
 						}
