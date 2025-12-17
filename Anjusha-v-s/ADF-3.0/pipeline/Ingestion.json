@@ -255,7 +255,8 @@
 				"defaultValue": "Orders"
 			},
 			"backdate": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "2025-09-24"
 			}
 		},
 		"annotations": []
