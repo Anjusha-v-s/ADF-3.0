@@ -60,7 +60,7 @@
 						{
 							"type": "Query",
 							"text": {
-								"value": "@concat(\r\n  'SELECT count(*) AS total_count FROM ',\r\n  pipeline().parameters.schema,\r\n  '.',\r\n  pipeline().parameters.table,\r\n  ' WHERE last_updated > ''',\r\n  if(\r\n    empty(pipeline().parameters.backdate),\r\n    activity('last_cdc').output.value[0].cdc_timestamp,\r\n    pipeline().parameters.backdate\r\n  ),\r\n  ''''\r\n)\r\n",
+								"value": "@{concat(\n  'SELECT count(*) AS total_count FROM ',\n  pipeline().parameters.schema,\n  '.',\n  pipeline().parameters.table,\n  ' WHERE last_updated > ''',\n  if(\n    empty(pipeline().parameters.backdate),\n    activity('last_cdc').output.value[0].cdc_timestamp,\n    pipeline().parameters.backdate\n  ),\n  ''''\n)}\n",
 								"type": "Expression"
 							}
 						}
