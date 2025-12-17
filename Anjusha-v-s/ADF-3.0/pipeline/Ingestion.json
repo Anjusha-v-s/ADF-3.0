@@ -71,8 +71,6 @@
 			{
 				"name": "If new rows",
 				"type": "IfCondition",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Total_results",
