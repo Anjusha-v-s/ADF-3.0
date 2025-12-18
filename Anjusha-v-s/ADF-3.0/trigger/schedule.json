@@ -19,6 +19,12 @@
 				"startTime": "2025-12-18T09:31:00",
 				"timeZone": "India Standard Time",
 				"schedule": {
+					"minutes": [
+						30
+					],
+					"hours": [
+						12
+					],
 					"monthDays": [
 						9
 					]
