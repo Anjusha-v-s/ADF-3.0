@@ -1,0 +1,139 @@
+📄 Scheduled Pipeline – Documentation (RAG Ready)
+Pipeline Name
+
+Scheduled
+
+Purpose
+
+The Scheduled pipeline acts as an orchestration and monitoring layer for the data ingestion process.
+It triggers the Ingestion pipeline, passes runtime parameters, waits for completion, and sends execution alerts upon success.
+
+This pipeline is typically used in scheduled or automated runs where monitoring and notifications are required.
+
+High-Level Flow
+
+Accept runtime parameters (schema, table, backdate)
+
+Execute the Ingestion pipeline
+
+Wait for ingestion completion
+
+Trigger an alert via HTTP Web Activity
+
+Pipeline Parameters
+Parameter	Type	Description
+schema	string	Source database schema name
+table	string	Source table name
+backdate	string	Override CDC timestamp for backfill
+Activities Breakdown
+1️⃣ Execute Pipeline1 (ExecutePipeline)
+
+Type: ExecutePipeline
+Purpose: Triggers the Ingestion pipeline and passes runtime parameters.
+
+Key Characteristics
+
+Waits for pipeline completion (waitOnCompletion = true)
+
+Dynamically passes parameters from the Scheduled pipeline
+
+Parameters Passed
+schema   → pipeline().parameters.schema
+table    → pipeline().parameters.table
+backdate → pipeline().parameters.backdate
+
+Why This Matters
+
+Enables reusability of the Ingestion pipeline
+
+Allows centralized scheduling
+
+Supports dynamic execution for multiple tables
+
+2️⃣ Alerts (WebActivity)
+
+Type: WebActivity
+Purpose: Sends pipeline execution details to an external alerting system (Logic App / Webhook).
+
+Trigger Condition
+
+Executes only if the Ingestion pipeline succeeds
+
+HTTP Configuration
+
+Method: POST
+
+Endpoint: Azure Logic App HTTP trigger
+
+Payload:
+
+{
+  "pipeline_name": "<Pipeline Name>",
+  "pipeline_runId": "<Pipeline Run ID>"
+}
+
+Use Cases
+
+Email notifications
+
+Teams / Slack alerts
+
+Audit logging
+
+Operational monitoring
+
+Error Handling & Retry
+
+No retry logic is configured
+
+Failures in the Ingestion pipeline prevent alert execution
+
+Alerting is strictly success-based
+
+Typical Use Cases
+
+Nightly ingestion jobs
+
+Scheduled CDC pipelines
+
+Automated ingestion monitoring
+
+Centralized orchestration for multiple tables
+
+Common Questions This Pipeline Helps Answer
+
+How is ingestion triggered automatically?
+
+Where are alerts sent after ingestion?
+
+How do parameters flow into the ingestion process?
+
+How do we orchestrate multiple pipelines safely?
+
+Impact of Changes
+Change	Impact
+Modify parameters	Affects downstream ingestion
+Disable waitOnCompletion	Alerts may trigger early
+Change alert URL	Notification delivery affected
+Rename Ingestion pipeline	Execution failure
+Dependencies
+
+Ingestion pipeline
+
+Azure Logic App (HTTP trigger)
+
+Parameterized datasets and linked services
+
+Summary
+
+The Scheduled pipeline provides:
+
+Centralized orchestration
+
+Parameterized execution
+
+Operational visibility
+
+Automated alerting
+
+It is a control pipeline, not a transformation pipeline.
