@@ -1,0 +1,183 @@
+# ADF Ingestion Pipeline – Knowledge Document
+
+## Pipeline Name
+
+Ingestion
+
+---
+
+## Overview
+
+The **Ingestion** pipeline implements a **CDC-based incremental ingestion pattern** in Azure Data Factory. It extracts new or updated records from an **Azure SQL Database** and loads them into **Azure Data Lake Storage (ADLS)** in **Parquet format**. The pipeline uses a persisted CDC watermark to ensure idempotent and incremental processing.
+
+This document is intended to be consumed by a **RAG (Retrieval-Augmented Generation)** system so that LLMs can answer questions about pipeline behavior, supported modifications, and constraints.
+
+---
+
+## Source and Sink
+
+* **Source:** Azure SQL Database
+* **Sink:** Azure Data Lake Storage Gen2
+* **Output Format:** Parquet
+* **CDC Column:** `last_updated`
+
+---
+
+## Pipeline Parameters
+
+| Parameter | Description                         | Default Value |
+| --------- | ----------------------------------- | ------------- |
+| schema    | Source database schema              | `source`      |
+| table     | Source table name                   | `Orders`      |
+| backdate  | Optional override for CDC timestamp | `2025-09-24`  |
+
+---
+
+## Activity Flow
+
+### 1. `last_cdc` (Lookup)
+
+**Purpose:**
+Reads the last processed CDC timestamp from a JSON file stored in ADLS.
+
+**Key Behavior:**
+
+* Acts as the starting watermark for incremental loading
+* Uses JSON format from ADLS
+
+**Output:**
+
+* `cdc_timestamp`
+
+---
+
+### 2. `TotalResults` (Script)
+
+**Purpose:**
+Determines whether new or updated records exist in the source table.
+
+**Logic:**
+Counts rows where `last_updated` is greater than the stored CDC timestamp or the provided backdate parameter.
+
+**Outcome:**
+
+* Produces `total_count` used for conditional branching
+
+---
+
+### 3. `If new rows` (If Condition)
+
+**Purpose:**
+Controls whether ingestion should proceed.
+
+**Condition:**
+
+* Executes downstream activities only when `total_count > 0`
+
+---
+
+### 4. `load` (Copy Activity)
+
+**Purpose:**
+Copies incremental data from Azure SQL Database to ADLS in Parquet format.
+
+**Key Characteristics:**
+
+* Dynamic SQL query using pipeline parameters
+* Incremental filter based on CDC timestamp
+* Writes flattened Parquet files
+
+---
+
+### 5. `max_cdc` (Script)
+
+**Purpose:**
+Retrieves the maximum `last_updated` value from the source table after ingestion.
+
+**Usage:**
+
+* Determines the new CDC watermark for future pipeline runs
+
+---
+
+### 6. `changecdc` (Copy Activity)
+
+**Purpose:**
+Persists the updated CDC timestamp back to ADLS as a JSON file.
+
+**Significance:**
+
+* Ensures incremental behavior across pipeline executions
+
+---
+
+## Supported Modifications
+
+### Safe Modifications
+
+* Change source schema or table via parameters
+* Modify CDC column logic
+* Change sink format (Parquet → Delta or CSV)
+* Enable partitioning in sink
+* Add additional filters in source query
+* Tune performance settings (timeouts, retries)
+
+### Conditional Modifications
+
+* Adjust CDC comparison logic (`>` vs `>=`)
+* Add audit or logging activities
+* Introduce ELSE branch in If Condition
+
+### High-Risk Modifications
+
+* Removing CDC persistence logic
+* Disabling the If Condition check
+* Changing CDC column semantics without validation
+
+---
+
+## Supported Use Cases
+
+* Incremental data ingestion
+* Backdated reprocessing
+* Parameter-driven ingestion
+* Table-level CDC management
+
+---
+
+## Constraints and Assumptions
+
+* Source table contains a reliable `last_updated` column
+* CDC timestamp is monotonically increasing
+* JSON CDC file exists or is initialized
+
+---
+
+## RAG Metadata (for indexing)
+
+```json
+{
+  "pipeline": "Ingestion",
+  "platform": "Azure Data Factory",
+  "pattern": "CDC Incremental Load",
+  "source": "Azure SQL",
+  "sink": "ADLS",
+  "format": "Parquet"
+}
+```
+
+---
+
+## Typical Questions This Document Answers
+
+* What does the Ingestion pipeline do?
+* How does CDC work in this pipeline?
+* What modifications are allowed?
+* Why is a CDC JSON file used?
+* Can the source table or schema be changed?
+
+---
+
+## Document Purpose
+
+This document exists to provide **semantic understanding** of the pipeline for LLM-based systems. It enables accurate answers beyond pipeline name retrieval by explaining logic, behavior, and modification boundaries.
